@@ -14,7 +14,8 @@ app_context.push()
 REQUEST_INTERVAL = 20
 celery = Celery('tasks', broker='redis://localhost:6379/0',  backend='redis://localhost:6379/1')
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename='app_monitor.log', level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 MICROSERVICES = {
     "grupo": "http://127.0.0.1:5000/grupo",
@@ -49,9 +50,9 @@ def check_microservice_status():
         ]:
             try:
                 response = requests.get(microservice_url, timeout=10)
-                logging.info("response")
                 if response.status_code == 200:
                     MICROSERVICES_AVAILABILITY[microservice_name] = True
+                    logging.info("{} se encuentra OK".format(microservice_name))
                 else:
                     logging.error("Error en {}".format(microservice_name))
                     registrar_error.delay("Error en {}".format(microservice_name))
