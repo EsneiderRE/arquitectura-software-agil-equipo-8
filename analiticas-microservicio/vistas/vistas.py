@@ -12,3 +12,4 @@ class VistaAnaliticas(Resource):
         min_edad = min([x.edad for x in candidatos])
         max_edad = max([x.edad for x in candidatos])
         return f"""Total candidatos: {cantidad_candidatos}. Profesiones: {profesiones}. Rango de dad candidatos: {min_edad} - {max_edad}"""
+
