@@ -2,6 +2,7 @@ from flask import Flask
 import time
 import requests
 import threading
+from celery import Celery
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbapp.sqlite'
@@ -10,10 +11,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app_context = app.app_context()
 app_context.push()
 
-REQUEST_INTERVAL = 30
+REQUEST_INTERVAL = 10
+celery = Celery('tasks', broker='redis://localhost:6379/0',  backend='redis://localhost:6379/1')
 
-def send_email(subjet: str, msg: str) -> None:
-    print(subjet, msg)
+@celery.task(name="notificar_error")
+def registrar_error(error):
+    pass
 
 
 def check_microservice_status():
@@ -23,17 +26,17 @@ def check_microservice_status():
             ("http://127.0.0.1:5000/analitica", "VistaAnaliticas"),
         ]:
             try:
-                response = requests.get(microservice_url)
+                response = requests.get(microservice_url, timeout=2)
                 if response.status_code != 200:
-                    send_email("{} Status Alert".format(microservice_name),
-                               "{} is down! Status Code: {}".format(microservice_name, response.status_code))
+                    registrar_error.delay("Error en {}".format(microservice_name))
+
             except requests.exceptions.RequestException as e:
-                send_email("{} Status Alert".format(microservice_name),
-                           "{} is down! Error: {}".format(microservice_name, str(e)))
+                registrar_error.delay("Error en {}".format(microservice_name))
 
         time.sleep(REQUEST_INTERVAL)
 
 # Start the background thread for monitoring
-monitoring_thread = threading.Thread(target=check_microservice_status)
-monitoring_thread.daemon = True
-monitoring_thread.start()
+check_microservice_status()
+#monitoring_thread = threading.Thread(target=check_microservice_status)
+#monitoring_thread.daemon = True
+#monitoring_thread.start()
