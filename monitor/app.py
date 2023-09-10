@@ -18,7 +18,7 @@ logging.basicConfig(filename='app_monitor.log', level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 MICROSERVICES = {
-    "grupo": "http://127.0.0.1:5000/grupo",
+    "grupo": "http://127.0.0.1:5002/grupo",
     "analitica": "http://127.0.0.1:5001/analitica"
 }
 MICROSERVICES_AVAILABILITY = {
@@ -33,6 +33,8 @@ def gateway(service_name):
         return jsonify(error="Service not found"), 404
     if MICROSERVICES_AVAILABILITY[service_name]:
         response = requests.get(service_url)
+        if response.status_code!=200:
+            logging.error("Api gateway , Error en el servicio {}", service_name)
         return response.content, response.status_code
     else:
         return jsonify(error="Service is down or unreachable"), 503
@@ -45,7 +47,7 @@ def registrar_error(error):
 def check_microservice_status():
     while True:
         for microservice_url, microservice_name in [
-            ("http://127.0.0.1:5000/grupo", "grupo"),
+            ("http://127.0.0.1:5002/grupo", "grupo"),
             ("http://127.0.0.1:5001/analitica", "analitica"),
         ]:
             try:

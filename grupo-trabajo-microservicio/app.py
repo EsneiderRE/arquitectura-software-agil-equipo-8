@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
-from modelos import db
+from .modelos import db
 from .vistas import VistaGrupos
 from .modelos import Candidato
 import random
@@ -25,6 +25,8 @@ api.add_resource(VistaGrupos, '/grupo')
 REQUEST_INTERVAL = 30
 
 fake = Faker()
+
+
 def generar_cantidatos(n=20):
     for x in range(n):
         nombre_candidato = fake.name()

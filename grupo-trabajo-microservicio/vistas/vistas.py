@@ -5,6 +5,7 @@ from ..modelos import CandidatoSchema, Candidato
 
 candidato_schema = CandidatoSchema()
 
+
 class VistaGrupos(Resource):
     def get(self):
         candidatos = Candidato.query.order_by(func.random()).limit(3).all()
