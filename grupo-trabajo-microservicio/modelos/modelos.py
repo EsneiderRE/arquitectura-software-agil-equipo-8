@@ -24,4 +24,3 @@ class CandidatoSchema(SQLAlchemyAutoSchema):
     profesion = fields.String()
     edad = fields.Integer()
     telefono = fields.String()
-

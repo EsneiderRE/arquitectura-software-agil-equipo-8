@@ -38,4 +38,5 @@ def generar_cantidatos(n=20):
         db.session.add(nuevo_candidato)
         db.session.commit()
 
+
 generar_cantidatos()
