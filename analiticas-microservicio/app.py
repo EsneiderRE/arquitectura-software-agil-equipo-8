@@ -24,6 +24,8 @@ api.add_resource(VistaAnaliticas, '/analitica')
 
 REQUEST_INTERVAL = 30
 fake = Faker()
+
+
 def generar_cantidatos(n=20):
     for x in range(n):
         nombre_candidato = fake.name()
@@ -34,5 +36,6 @@ def generar_cantidatos(n=20):
                                     edad=edad_candidato, telefono=telefono_candidato)
         db.session.add(nuevo_candidato)
         db.session.commit()
+
 
 generar_cantidatos()
