@@ -1,7 +1,8 @@
-from flask import request
 from sqlalchemy import func
+from flask import request
 from flask_restful import Resource
 from ..modelos import CandidatoSchema, Candidato
+
 
 candidato_schema = CandidatoSchema()
 
@@ -17,3 +18,4 @@ class VistaGrupos(Resource):
             return candidato_schema.dump(candidato)
         else:
             return "Candidato no encontrado", 404
+        
